@@ -10,6 +10,7 @@
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
+                "Headers/functions.c",
                 "-lraylib",
                 "-lGL",
                 "-lm",

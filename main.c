@@ -3,6 +3,7 @@
 #include "Headers/raylib.h"
 #include "Headers/structs.h"
 #include "Headers/raymath.h"
+#include "Headers/functions.h"
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 550
 
@@ -16,8 +17,10 @@ int main(void)
     Player player = {.position = {.x = 30, .y = 150}, .color = GOLD, .health = 3, .size = {.x = 25, .y = 80}};
     Player enemy = {.position = {.x = 745, .y = 150}, .color = WHITE, .health = 3, .size = {.x = 25, .y = 80}};
 
+    Camera2D mainCamera = {0};
+    mainCamera.zoom = 1;
+    
     Music music = LoadMusicStream("resources/song.wav");
-    //music.looping = true;
     PlayMusicStream(music);
     SetMusicVolume(music,0.1);
     
@@ -27,13 +30,15 @@ int main(void)
     int score = 0;
     Projectile projectile = {.position = {.x = SCREEN_WIDTH / 2 - ( radius / 2), .y = SCREEN_HEIGHT / 2 - (radius / 2)}, .radius = radius, .speed = {.x = projectileSpeed, .y = projectileSpeed}, .color = WHITE};
     bool lost = false;
+
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
-        
         // Update
         if(!lost)
         {
+            #pragma region update_logic
             UpdateMusicStream(music);
+
             if(IsKeyDown(KEY_W) && !player.position.y <= 0){
                 player.position.y -= movementSpeed;
             }
@@ -45,12 +50,7 @@ int main(void)
                 lost = true;
             }
             
-            if (projectile.position.x + radius >= SCREEN_WIDTH){
-                projectile.speed.x *= -1;
-            }
-            if (projectile.position.y - radius <= 0 ||
-                projectile.position.y + radius >= SCREEN_HEIGHT)
-                projectile.speed.y *= -1;
+            checkProjectileBounds(&projectile, SCREEN_WIDTH, SCREEN_HEIGHT);
             
             Vector2 projectileCenter = {.x = projectile.position.x , .y = projectile.position.y + projectile.radius};
             Rectangle playerRectangle = {.height = player.size.y, .width = player.size.x, .x = player.position.x, .y = player.position.y};
@@ -67,13 +67,9 @@ int main(void)
                 
             projectile.position = Vector2Add( projectile.position, projectile.speed);
 
-            // if(!projectile.position.y - enemy.size.y / 2 <= 0 || !projectile.position.y + enemy.size.y / 2 >= SCREEN_WIDTH){
-                // }
-                enemy.position.y = projectile.position.y - enemy.size.y /2;
+            enemy.position.y = projectile.position.y - enemy.size.y /2;
+            #pragma endregion update_logic
         }
-        // if(!IsMusicStreamPlaying(music)){
-        //     PlayMusicStream(music);
-        // }
 
         // Draw
         {
@@ -83,8 +79,8 @@ int main(void)
 
             BeginDrawing();
             ClearBackground(BLACK);
+            BeginMode2D(mainCamera);
 
-    
                 if(lost){
                     char msg[60]= "GAME OVER!\nYour score: ";
                     strcat(msg, scoreStr);
@@ -95,7 +91,7 @@ int main(void)
                 DrawRectangleV(enemy.position, enemy.size, enemy.color);
                 DrawCircleV(projectile.position, projectile.radius,projectile.color);
                 DrawText(scoreStr, SCREEN_WIDTH /2 - 20, 20, 45, GOLD);
-
+            EndMode2D();
             EndDrawing();
         }
     }
