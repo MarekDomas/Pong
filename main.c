@@ -20,6 +20,9 @@ int main(void)
     Music menu_song = LoadMusicStream("resources/menu_song.wav");
     Music game_song = LoadMusicStream("resources/game_song.mp3");
     
+    int offset = 150;
+    loadPlayerTexture();
+    
     SetMusicVolume(menu_song,0.1);
     SetMusicVolume(game_song,0.1);
     
@@ -41,15 +44,8 @@ int main(void)
             UpdateMusicStream(game_song);
             movePlayer();
 
-            // if(projectile.position.x - projectile.radius <= 0 ){
-            //     gameState = GAME_OVER;
-            // }
-
-            //checkProjectileBounds();            
-            //checkColisions();
-                
-            // projectile.position = Vector2Add( projectile.position, Vector2Scale(projectile.speed, GetFrameTime()));
-            // enemy.position.y = projectile.position.y - enemy.size.y /2;
+            player.destRect.x = player.position.x + offset;
+            player.destRect.y = player.position.y;
 
             if(IsKeyPressed(KEY_P)){
                 gameState = PAUSED;
@@ -78,7 +74,7 @@ int main(void)
             snprintf(scoreStr, 10, "%d", score);
 
             BeginDrawing();
-            ClearBackground(BLACK);
+            ClearBackground(WHITE);
             BeginMode2D(mainCamera);
 
                 if(gameState == GAME_OVER){
@@ -88,9 +84,10 @@ int main(void)
                     DrawText(msg, 200, 200, 45, RED);
                 }
                 else if(gameState == GAME){
-                    DrawRectangleV(player.position, player.size, player.color);
+                    //DrawRectangleV(player.position, player.size, player.color);
+                    DrawTexturePro(player.texture, player.sourceRect, player.destRect, player.origin, player.rotation, WHITE);
 
-                    DrawText(scoreStr, SCREEN_WIDTH /2 - 20, 20, 45, WHITE);
+                    DrawText(scoreStr, SCREEN_WIDTH /2 - 20, 20, 45, GOLD);
                     DrawText("Press P to pause!",10,10,20,BLUE);
                 }
                 else if(gameState == MENU){

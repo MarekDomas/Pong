@@ -5,6 +5,12 @@ typedef struct Player{
     Vector2 size;
     Color color;
     short health;
+    Texture2D texture;
+    Rectangle sourceRect;
+    Rectangle destRect;
+    Vector2 origin;
+    int rotation;
+
 }Player;
 
 typedef struct Projectile{

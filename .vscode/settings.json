@@ -4,6 +4,8 @@
         "stdio.h": "c",
         "random": "c",
         "globals.h": "c",
-        "raymath.h": "c"
+        "raymath.h": "c",
+        "raylib.h": "c",
+        "enums.h": "c"
     }
 }
