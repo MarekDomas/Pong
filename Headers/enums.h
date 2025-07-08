@@ -1,5 +1,6 @@
 enum screen{
     MENU,
     GAME,
-    GAME_OVER
+    GAME_OVER,
+    PAUSED
 };

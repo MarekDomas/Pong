@@ -84,6 +84,10 @@ int main(void)
             projectile.position = Vector2Add( projectile.position, Vector2Scale(projectile.speed, GetFrameTime()));
 
             enemy.position.y = projectile.position.y - enemy.size.y /2;
+
+            if(IsKeyPressed(KEY_P)){
+                gameState = PAUSED;
+            }
         }
         else if(gameState == GAME_OVER){
             StopMusicStream(music);
@@ -94,6 +98,11 @@ int main(void)
                 projectile.position = screenCenter;
                 projectile.speed = projectileSpeedV2;
                 score = 0;
+                gameState = GAME;
+            }
+        }
+        else if(gameState == PAUSED){
+            if(IsKeyPressed(KEY_P)){
                 gameState = GAME;
             }
         }
@@ -123,6 +132,9 @@ int main(void)
                 }
                 else if(gameState == MENU){
                     DrawText("PRESS ENTER TO PLAY!", 170, 250, 45, BLUE);
+                }
+                else if(gameState == PAUSED){
+                    DrawText("PRESS P TO PLAY!", 150, 250, 45, BLUE);
                 }
 
             EndMode2D();
