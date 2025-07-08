@@ -41,15 +41,15 @@ int main(void)
             UpdateMusicStream(game_song);
             movePlayer();
 
-            if(projectile.position.x - projectile.radius <= 0 ){
-                gameState = GAME_OVER;
-            }
+            // if(projectile.position.x - projectile.radius <= 0 ){
+            //     gameState = GAME_OVER;
+            // }
 
-            checkProjectileBounds();            
-            checkColisions();
+            //checkProjectileBounds();            
+            //checkColisions();
                 
-            projectile.position = Vector2Add( projectile.position, Vector2Scale(projectile.speed, GetFrameTime()));
-            enemy.position.y = projectile.position.y - enemy.size.y /2;
+            // projectile.position = Vector2Add( projectile.position, Vector2Scale(projectile.speed, GetFrameTime()));
+            // enemy.position.y = projectile.position.y - enemy.size.y /2;
 
             if(IsKeyPressed(KEY_P)){
                 gameState = PAUSED;
@@ -89,8 +89,6 @@ int main(void)
                 }
                 else if(gameState == GAME){
                     DrawRectangleV(player.position, player.size, player.color);
-                    DrawRectangleV(enemy.position, enemy.size, enemy.color);
-                    DrawCircleV(projectile.position, projectile.radius,projectile.color);
 
                     DrawText(scoreStr, SCREEN_WIDTH /2 - 20, 20, 45, WHITE);
                     DrawText("Press P to pause!",10,10,20,BLUE);
