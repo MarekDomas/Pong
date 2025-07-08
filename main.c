@@ -119,22 +119,25 @@ int main(void)
                 if(gameState == GAME_OVER){
                     char msg[60]= "GAME OVER!\nYour score: ";
                     strcat(msg, scoreStr);
-                    strcat(msg, "\nPRESS R TO RESTART!");
+                    strcat(msg, "\nPress R to restart!");
                     DrawText(msg, 200, 200, 45, RED);
                 }
                 else if(gameState == GAME){
 
                     DrawText(scoreStr, SCREEN_WIDTH /2 - 20, 20, 45, WHITE);
+                    DrawText("Press P to pause!",10,10,20,BLUE);
                     DrawRectangleV(player.position, player.size, player.color);
     
                     DrawRectangleV(enemy.position, enemy.size, enemy.color);
                     DrawCircleV(projectile.position, projectile.radius,projectile.color);
                 }
                 else if(gameState == MENU){
-                    DrawText("PRESS ENTER TO PLAY!", 170, 250, 45, BLUE);
+                    DrawText("Press ENTER to continue!", 170, 250, 45, BLUE);
                 }
                 else if(gameState == PAUSED){
-                    DrawText("PRESS P TO PLAY!", 150, 250, 45, BLUE);
+                    char msg[60] = "Press P to play!\nYour score: ";
+                    strcat(msg, scoreStr);
+                    DrawText(msg, 200, 205, 45, BLUE);
                 }
 
             EndMode2D();
