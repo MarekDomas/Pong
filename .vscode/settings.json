@@ -2,6 +2,8 @@
     "files.associations": {
         "structs.h": "c",
         "stdio.h": "c",
-        "random": "c"
+        "random": "c",
+        "globals.h": "c",
+        "raymath.h": "c"
     }
 }

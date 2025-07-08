@@ -1,13 +1,12 @@
 #include <stdio.h>
 #include <string.h>
+//#include <sqlite3.h>
 #include "Headers/raylib.h"
 #include "Headers/structs.h"
 #include "Headers/raymath.h"
 #include "Headers/functions.h"
 #include "Headers/enums.h"
-
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 550
+#include "Headers/globals.h"
 
 int main(void)
 {
@@ -15,31 +14,17 @@ int main(void)
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Basic pong");
     SetTargetFPS(144);               
     InitAudioDevice();
-
-    Vector2 defaultPlayerPos = {.x = 30, .y = 150};
-    Vector2 defaultEnemyPos = {.x = 745, .y = 150};
-
-    Player player = {.position = defaultPlayerPos, .color = GOLD, .health = 3, .size = {.x = 25, .y = 80}};
-    Player enemy = {.position = defaultEnemyPos, .color = WHITE, .health = 3, .size = {.x = 25, .y = 80}};
     
     Camera2D mainCamera = {0};
     mainCamera.zoom = 1;
+    Music menu_song = LoadMusicStream("resources/menu_song.wav");
+    Music game_song = LoadMusicStream("resources/game_song.mp3");
     
-    enum screen gameState = MENU;
-    Music music = LoadMusicStream("resources/song.wav");
-    int score = 0;
+    SetMusicVolume(menu_song,0.1);
+    SetMusicVolume(game_song,0.1);
     
-    SetMusicVolume(music,0.1);
-    
-    int radius = 12;
-    int projectileSpeed = 300;
-    float movementSpeed = 300;
-    Vector2 screenCenter = {.x = SCREEN_WIDTH / 2 - ( radius / 2), .y = SCREEN_HEIGHT / 2 - (radius / 2)};
-    Vector2 projectileSpeedV2 = {.x = projectileSpeed, .y = projectileSpeed};
-    Projectile projectile = {.position = screenCenter, .radius = radius, .speed = projectileSpeedV2, .color = WHITE};
-
-    PlayMusicStream(music);
-
+    PlayMusicStream(menu_song);
+    PlayMusicStream(game_song);
     
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
@@ -49,40 +34,21 @@ int main(void)
             if(IsKeyPressed(KEY_ENTER)){
                 gameState = GAME;
             }
+            UpdateMusicStream(menu_song);
         }
         else if(gameState == GAME)
         {
-            UpdateMusicStream(music);
+            UpdateMusicStream(game_song);
+            movePlayer();
 
-            if (IsKeyDown(KEY_W) && player.position.y > 0) {
-                player.position.y -= movementSpeed * GetFrameTime();
-            }
-            if (IsKeyDown(KEY_S) && player.position.y < SCREEN_HEIGHT - player.size.y) {
-                player.position.y += movementSpeed * GetFrameTime();
-            }
-
-            
-            if(projectile.position.x - radius <= 0 ){
+            if(projectile.position.x - projectile.radius <= 0 ){
                 gameState = GAME_OVER;
             }
-            
-            checkProjectileBounds(&projectile, SCREEN_WIDTH, SCREEN_HEIGHT);
-            
-            Vector2 projectileCenter = {.x = projectile.position.x , .y = projectile.position.y + projectile.radius};
-            Rectangle playerRectangle = {.height = player.size.y, .width = player.size.x, .x = player.position.x, .y = player.position.y};
-            Rectangle enemyRectangle = {.height = enemy.size.y, .width = enemy.size.x, .x = enemy.position.x, .y = enemy.position.y};
 
-            if (CheckCollisionCircleRec(projectileCenter,projectile.radius,playerRectangle))
-            {
-                projectile.speed.x *= - 1;
-                score++;
-            }
-            else if(CheckCollisionCircleRec(projectileCenter,projectile.radius,enemyRectangle)){
-                projectile.speed.x *= - 1;
-            }
+            checkProjectileBounds();            
+            checkColisions();
                 
             projectile.position = Vector2Add( projectile.position, Vector2Scale(projectile.speed, GetFrameTime()));
-
             enemy.position.y = projectile.position.y - enemy.size.y /2;
 
             if(IsKeyPressed(KEY_P)){
@@ -90,20 +56,19 @@ int main(void)
             }
         }
         else if(gameState == GAME_OVER){
-            StopMusicStream(music);
+            StopMusicStream(menu_song);
             if(IsKeyPressed(KEY_R)){
-                PlayMusicStream(music);
-                player.position = defaultPlayerPos;
-                enemy.position = defaultEnemyPos;
-                projectile.position = screenCenter;
-                projectile.speed = projectileSpeedV2;
-                score = 0;
-                gameState = GAME;
+                PlayMusicStream(menu_song);
+                resetGame();
             }
         }
         else if(gameState == PAUSED){
             if(IsKeyPressed(KEY_P)){
                 gameState = GAME;
+            }
+            if(IsKeyPressed(KEY_R)){
+                PlayMusicStream(menu_song);
+                resetGame();
             }
         }
         
@@ -123,16 +88,15 @@ int main(void)
                     DrawText(msg, 200, 200, 45, RED);
                 }
                 else if(gameState == GAME){
+                    DrawRectangleV(player.position, player.size, player.color);
+                    DrawRectangleV(enemy.position, enemy.size, enemy.color);
+                    DrawCircleV(projectile.position, projectile.radius,projectile.color);
 
                     DrawText(scoreStr, SCREEN_WIDTH /2 - 20, 20, 45, WHITE);
                     DrawText("Press P to pause!",10,10,20,BLUE);
-                    DrawRectangleV(player.position, player.size, player.color);
-    
-                    DrawRectangleV(enemy.position, enemy.size, enemy.color);
-                    DrawCircleV(projectile.position, projectile.radius,projectile.color);
                 }
                 else if(gameState == MENU){
-                    DrawText("Press ENTER to continue!", 170, 250, 45, BLUE);
+                    DrawText("Press ENTER to Play!", 170, 50, 45, ORANGE);
                 }
                 else if(gameState == PAUSED){
                     char msg[60] = "Press P to play!\nYour score: ";

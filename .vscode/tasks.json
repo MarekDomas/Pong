@@ -10,14 +10,16 @@
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
-                "Headers/functions.c",
+                "CFiles/functions.c",
+                "CFiles/globals.c",
                 "-lraylib",
                 "-lGL",
                 "-lm",
                 "-lpthread",
                 "-ldl",
                 "-lrt",
-                "-lX11"
+                "-lX11",
+                "-lsqlite3",
             ],
             "options": {
                 "cwd": "${fileDirname}"
