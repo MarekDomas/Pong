@@ -80,7 +80,7 @@ int main(void)
         // Draw
         {
             char scoreStr[10] = {0};
-            snprintf(scoreStr, 10, "%d", activeShots);
+            snprintf(scoreStr, 10, "%d", score);
 
             BeginDrawing();
             ClearBackground(WHITE);

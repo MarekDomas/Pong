@@ -9,7 +9,7 @@ int score = 0;
 enum screen gameState = MENU;
 
 int radius = 12;
-int projectileSpeed = 700;
+int projectileSpeed = 300;
 float movementSpeed = 700;
 
 const Vector2 screenCenter = {.x = SCREEN_WIDTH / 2 - ( RADIUS / 2), .y = SCREEN_HEIGHT / 2 - (RADIUS / 2)};
